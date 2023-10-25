@@ -1,0 +1,9 @@
+# Build files
+build/
+
+# Dependency files
+node_modules/
+package-lock.json
+
+# MacOS hidden files
+.DS_Store
