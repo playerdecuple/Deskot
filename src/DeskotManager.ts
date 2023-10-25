@@ -9,6 +9,11 @@ class DeskotManager {
 
     register(instance: Deskot) {
         const duplicated = this.deskotInstanceList.find(deskot => deskot.id === instance.id);
+
+        if (duplicated) {
+            throw new Error("Already registered deskot instance.");
+        }
+
         this.deskotInstanceList.push(instance);
     }
 
