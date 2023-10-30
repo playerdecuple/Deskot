@@ -1,10 +1,25 @@
+import Main from "../main";
 import Deskot from "./Deskot";
+import LateInit from "./type/Lateinit";
 
 
 
 class DeskotManager {
 
     private readonly deskotInstanceList: Array<Deskot> = [];
+
+    private clock: LateInit<NodeJS.Timeout>;
+
+
+    start() {
+        let interval = Number(Main.config.tickInterval);
+
+        this.clock = setInterval(() => {
+            for (const deskot of this.deskotInstanceList) {
+                deskot.tick();
+            }
+        }, interval);
+    }
 
 
     register(instance: Deskot) {
