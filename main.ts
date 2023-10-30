@@ -1,3 +1,4 @@
+import { app } from "electron";
 import fs from "fs";
 import path from "path";
 
@@ -10,6 +11,8 @@ class Main {
 
     private static activeDeskotList: Array<string>;
 
+    static config: any;
+
     static deskotManager = new DeskotManager();
 
     
@@ -20,6 +23,7 @@ class Main {
         } catch (e) {
             throw new Error("Failed to load configuration file.");
         }
+        this.deskotManager.start();
     }
 
 
@@ -28,7 +32,7 @@ class Main {
         const config = JSON.parse(raw);
 
         this.activeDeskotList = config?.activeDeskotList as Array<string>;
-        // TODO: Other configurations
+        this.config = config;
     }
 
 
@@ -57,4 +61,12 @@ class Main {
 }
 
 
-Main.main();
+
+// Execute main method
+
+app.on("ready", () => {
+    Main.main();
+});
+
+
+export default Main;
