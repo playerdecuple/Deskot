@@ -1,5 +1,7 @@
 {
     "activeDeskotList": [
         "Shimeji"
-    ]
+    ],
+    "alwaysOnTop": true,
+    "tickInterval": 40
 }

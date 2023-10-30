@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<DeskotActions>
+
+    <ActionList>
+
+        <Action name="Look" type="embedded" class="./actions/Look" />
+        <Action name="Offset" type="embedded" class="./actions/Offset" />
+
+		<Action name="Stand" type="stay" border="floor">
+			<Animation>
+				<Sprite image="/deskot1.png" anchor="64,128" velocity="0,0" duration="250" />
+			</Animation>
+        </Action>
+
+    </ActionList>
+
+</DeskotActions>
