@@ -13,8 +13,6 @@ class ActionBuilder implements ActionFactoryLike {
 
     private readonly animations: Array<any> = [];
 
-    // TODO: Children Animation
-
     
     private readonly deskot: Deskot;
 
@@ -71,8 +69,13 @@ class ActionBuilder implements ActionFactoryLike {
     async build(attr: any = this.attr): Promise<Action> {
         let action: LateInit<Action>;
 
-        const childrenAction = await this.createActions();
-        const animations = await this.createAnimations();
+        const [
+            childrenAction,
+            animations
+        ] = await Promise.all([
+            async () => await this.createActions(),
+            async () => await this.createAnimations()
+        ]);
         
         if (this.type == "embedded") {
             try {
@@ -107,6 +110,12 @@ class ActionBuilder implements ActionFactoryLike {
         const animPromises = this.animations.map(factory => factory.build());
         const animations = await Promise.all(animPromises);
         return animations;
+    }
+
+    
+    static async build(deskot: Deskot, name: string, params: any): Promise<Action> {
+        const instance = deskot.actionFactories.get(name);
+        return await instance!!.build(params);
     }
 
     
