@@ -3,6 +3,8 @@ import path from "path";
 import Nullable from "../type/Nullable";
 import DeskotImage from "./DeskotImage";
 import Deskot from "../Deskot";
+import Coordinate from "../position/Coordinate";
+import Dimension from "../position/Dimension";
 
 
 
@@ -22,7 +24,7 @@ class ImagePair {
     }
 
 
-    private static async load(imagePath: string, deskot: Deskot, useMirror: boolean = false): Promise<ArrayBuffer> {
+    private static async load(imagePath: string, deskot: Deskot, useMirror: boolean = false): Promise<Blob> {
         try {
             const raw = await fetch(path.resolve(__dirname, "deskots", deskot.name, imagePath));
             let blob = await raw.blob();
@@ -36,7 +38,7 @@ class ImagePair {
                 blob = await canvas.convertToBlob();
             }
 
-            return blob.arrayBuffer();
+            return blob;
         } catch (e) {
             throw new Error("Failed to load sprite image.");
         }
@@ -48,19 +50,24 @@ class ImagePair {
         
             new Promise(async (res, _) => {
                 let result: ArrayBuffer;
+                let blob: Blob;
 
                 if (path == null) {
                     if (idx === 1) {
-                        result = await ImagePair.load(leftPath, deskot, true);
+                        blob = await ImagePair.load(leftPath, deskot, true);
                     } else {
                         throw new Error("Sprite path is required.");;
                     }
                 } else {
-                    result = await ImagePair.load(path, deskot);
+                    blob = await ImagePair.load(path, deskot);
                 }
 
+                result = await blob.arrayBuffer();
+                const { width, height } = await createImageBitmap(blob);
+
                 const buffer = new Uint8Array(result);
-                res(new DeskotImage(buffer, anchor));
+                const dimension = new Dimension(width, height);
+                res(new DeskotImage(buffer, anchor, dimension));
             }) as Promise<DeskotImage>
 
         ));
