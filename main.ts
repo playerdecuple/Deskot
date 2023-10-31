@@ -4,6 +4,8 @@ import path from "path";
 
 import Deskot from "./src/Deskot";
 import DeskotManager from "./src/DeskotManager";
+import Coordinate from "./src/position/Coordinate";
+import BehaviorBuilder from "./src/behavior/BehaviorBuilder";
 
 
 
@@ -40,22 +42,46 @@ class Main {
 
     private static loadDeskots() {
         for (const deskotName of this.activeDeskotList) {
-            const deskotPath = path.resolve(__dirname, "deskots", deskotName);
-            const deskotInstance = new Deskot(deskotName);
-            
-            let actionsXmlPath = path.resolve(deskotPath, "./actions.xml");
-            let behaviorsXmlPath = path.resolve(deskotPath, "./behaviors.xml");
+            this.createDeskot(deskotName);
+        }
+    }
 
-            if (!fs.existsSync(actionsXmlPath)) {
-                actionsXmlPath = path.resolve(__dirname, "config", "./default-actions.xml");
-            }
-            if (!fs.existsSync(behaviorsXmlPath)) {
-                behaviorsXmlPath = path.resolve(__dirname, "config", "./default-behaviors.xml");
-            }
 
-            deskotInstance.applyXml(actionsXmlPath)
-                          .applyXml(behaviorsXmlPath)
-                          .start();
+    private static createDeskot(deskotName: string) {
+        console.log(`Creating Deskot instance... (Deskot Instance Name: ${deskotName})`)
+
+        const deskotPath = path.resolve(__dirname, "deskots", deskotName);
+        const deskotInstance = new Deskot(deskotName);
+        
+        let actionsXmlPath = path.resolve(deskotPath, "./actions.xml");
+        let behaviorsXmlPath = path.resolve(deskotPath, "./behaviors.xml");
+
+        if (!fs.existsSync(actionsXmlPath)) {
+            actionsXmlPath = path.resolve(__dirname, "config", "./default-actions.xml");
+        }
+        if (!fs.existsSync(behaviorsXmlPath)) {
+            behaviorsXmlPath = path.resolve(__dirname, "config", "./default-behaviors.xml");
+        }
+
+        deskotInstance.applyXml(actionsXmlPath)
+                      .applyXml(behaviorsXmlPath)
+                      .start();
+        this.initDeskot(deskotInstance);
+    }
+
+
+    private static async initDeskot(deskotInstance: Deskot) {
+        console.log(`Intializing Deskot instance... (${deskotInstance.toString()})`);
+        
+        deskotInstance.setAnchor(new Coordinate(-4000, -4000));
+        deskotInstance.lookRight = Math.random() < 0.5;
+
+        try {
+            const behavior = await BehaviorBuilder.buildRandomBehavior(deskotInstance, null);
+            deskotInstance.setBehavior(behavior!!);
+        } catch (e) {
+            console.error(e);
+            throw new Error("Failed to initalize the first action.");
         }
     }
 

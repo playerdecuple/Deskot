@@ -37,7 +37,7 @@ class Deskot {
     // Image to display
     private image: Nullable<DeskotImage>;
 
-    private lookRight: boolean = false;
+    public lookRight: boolean = false;
 
     
     // Sound to play
@@ -75,6 +75,11 @@ class Deskot {
         this.id = Deskot.autoIncrumentIdCounter++;
         this.name = name;
         this.windowManager = new WindowManager(this.createWindow());
+    }
+
+    
+    toString() {
+        return `Deskot(ID: ${this.id}, Name: ${this.name}, Tick: ${this.time})`;
     }
 
     
@@ -185,6 +190,11 @@ class Deskot {
         } else {
             return this.windowManager.window.getBounds();
         }
+    }
+
+
+    setAnchor(anchor: Coordinate) {
+        this.anchor = anchor;
     }
 
 }
