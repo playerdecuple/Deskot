@@ -1,6 +1,7 @@
 import Deskot from "../Deskot";
 import ActionBuilder from "../action/factory/ActionBuilder";
 import Script from "../script/Script";
+import Nullable from "../type/Nullable";
 import DomUtil from "../utils/DomUtil";
 import Behavior from "./Behavior";
 import BehaviorLike from "./BehaviorLike";
@@ -112,6 +113,62 @@ class BehaviorBuilder {
     async build(): Promise<BehaviorLike> {
         const action = await ActionBuilder.build(this.deskot, this.actionName, this.params);
         return new Behavior(this.name, action, this.isHidden);
+    }
+
+
+    static async build(deskot: Deskot, name: string) {
+        if (deskot.behaviorFactories.has(name)) {
+            return await deskot.behaviorFactories.get(name)!!.build();
+        } else {
+            throw new Error("Behavior not found.");
+        }
+    }
+
+
+    static async buildRandomBehavior(deskot: Deskot, prevName: Nullable<string>): Promise<Nullable<BehaviorLike>> {
+        const params: any = {};
+        params.deskot = deskot;
+
+        let totalFrequency = 0;
+        const filterCandidates = (factory: BehaviorBuilder, params: any) => {
+            if (factory.isEffective(params)) {
+                totalFrequency += factory.frequency;
+                return true;
+            }
+            return false;
+        }
+
+        let candidates: Array<BehaviorBuilder> = Object
+            .values(deskot.behaviorFactories)
+            .filter(factory => filterCandidates(factory, params));
+
+        if (prevName != null) {
+            const prevFactory = deskot.behaviorFactories.get(prevName);
+            if (!prevFactory?.isNextAdditive) {
+                totalFrequency = 0;
+                candidates = [];
+            }
+
+            const nextCandidates: Array<BehaviorBuilder> = (prevFactory
+                ?.nextBehaviorBuilders ?? [])
+                .filter(factory => filterCandidates(factory, params));
+            candidates.push(...nextCandidates);
+        }
+
+        if (!totalFrequency) {
+            // TODO: Fall
+            return await BehaviorBuilder.build(deskot, "fall");
+        }
+
+        let random = Math.random() * totalFrequency;
+        for (const factory of candidates) {
+            random -= factory.frequency;
+            if (random < 0) {
+                return await factory.build();
+            }
+        }
+
+        return null
     }
 
 }
