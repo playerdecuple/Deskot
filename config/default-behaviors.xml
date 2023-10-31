@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<DeskotBehaviors>
+
+    <BehaviorList>
+
+        <Behavior name="Fall" frequency="0" hidden="true" />
+        <Behavior name="Dragged" frequency="0" hidden="true"></Behavior>
+        <Behavior name="Thrown" frequency="0" hidden="true"></Behavior>
+
+    </BehaviorList>
+
+</DeskotBehaviors>
