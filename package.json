@@ -6,7 +6,7 @@
   "scripts": {
     "copy-conf": "copyfiles -f config/**/* build/config",
     "copy-deskots": "copyfiles -f deskots/**/* build/deskots",
-    "copy-public": "copyfiles -f public/**/* build/public",
+    "copy-public": "copyfiles -f public/**/* build/public && copyfiles -f public/* build/public",
     "prepare": "tsc && npm run copy-conf && npm run copy-deskots && npm run copy-public",
     "start": "npm run prepare && nodemon --watch ./build/main.js --exec npm run exec",
     "exec": "cross-env DEBUG=true electron ."
