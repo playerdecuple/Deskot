@@ -6,6 +6,7 @@ import Sound from "../sound/Sound";
 import Nullable from "../type/Nullable";
 import Script from "../script/Script";
 import Animation from "./Animation";
+import Coordinate from "../position/Coordinate";
 
 
 class AnimationBuilder {

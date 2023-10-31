@@ -10,3 +10,6 @@ class Coordinate {
     }
 
 }
+
+
+export default Coordinate;

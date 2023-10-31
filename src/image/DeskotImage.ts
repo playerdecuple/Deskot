@@ -1,13 +1,20 @@
+import Coordinate from "../position/Coordinate";
+import Dimension from "../position/Dimension";
+
+
 class DeskotImage {
 
-    readonly src: Uint8Array;
+    readonly src: ArrayBuffer;
 
-    readonly anchor: Coordinate;
+    readonly center: Coordinate;
+
+    readonly size: Dimension;
 
 
-    constructor(src: Uint8Array, anchor: Coordinate) {
+    constructor(src: ArrayBuffer, center: Coordinate, size: Dimension) {
         this.src = src;
-        this.anchor = anchor;
+        this.center = center;
+        this.size = size;
     }
 
 }
