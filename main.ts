@@ -15,6 +15,8 @@ class Main {
 
     static deskotManager = new DeskotManager();
 
+    static path = path.resolve(__dirname);
+
     
     static main() {
         try {
