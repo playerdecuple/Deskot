@@ -17,6 +17,11 @@ class DeskotManager {
         this.clock = setInterval(() => {
             for (const deskot of this.deskotInstanceList) {
                 deskot.tick();
+                deskot.apply();
+            }
+
+            if (!this.deskotInstanceList.length) {
+                clearInterval(this.clock);
             }
         }, interval);
     }
@@ -29,6 +34,7 @@ class DeskotManager {
             throw new Error("Already registered deskot instance.");
         }
 
+        instance.manager = this;
         this.deskotInstanceList.push(instance);
     }
 
