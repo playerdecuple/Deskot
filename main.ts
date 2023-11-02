@@ -71,14 +71,14 @@ class Main {
 
 
     private static async initDeskot(deskotInstance: Deskot) {
-        console.log(`Intializing Deskot instance... (${deskotInstance.toString()})`);
+        console.log(`Initializing Deskot instance... (${deskotInstance.toString()})`);
         
         deskotInstance.setAnchor(new Coordinate(-4000, -4000));
         deskotInstance.lookRight = Math.random() < 0.5;
 
         try {
             const behavior = await BehaviorBuilder.buildRandomBehavior(deskotInstance, null);
-            deskotInstance.setBehavior(behavior!!);
+            deskotInstance.setBehavior(behavior!);
         } catch (e) {
             console.error(e);
             throw new Error("Failed to initalize the first action.");
