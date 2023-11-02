@@ -1,5 +1,6 @@
 import Deskot from "../Deskot";
 import ImagePair from "../image/ImagePair";
+import Coordinate from "../position/Coordinate";
 import Sound from "../sound/Sound";
 import Nullable from "../type/Nullable";
 
@@ -26,9 +27,18 @@ class Sprite {
 
 
     next(deskot: Deskot) {
-        // TODO: Deskot Anchor Set
-        // TODO: Deskot Image Set
-        // TODO: Deskot Sound Set
+        // Deskot Anchor Set
+        const nextX = deskot.anchor.x + (deskot.lookRight ? -this.dx : this.dx);
+        const nextY = deskot.anchor.y + this.dy;
+        deskot.anchor = new Coordinate(nextX, nextY);
+
+        // Deskot Image Set
+        deskot.image = this.image;
+        
+        // Deskot Sound Set
+        if (this.sound != null) {
+            deskot.windowManager.playSound(this.sound);
+        }
     }
 
 }

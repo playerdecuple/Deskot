@@ -1,10 +1,13 @@
 import path from "path";
+import fs from "fs";
+import imageSize from "image-size";
 
 import Nullable from "../type/Nullable";
 import DeskotImage from "./DeskotImage";
 import Deskot from "../Deskot";
 import Coordinate from "../position/Coordinate";
 import Dimension from "../position/Dimension";
+import Main from "../../main";
 
 
 
@@ -12,67 +15,59 @@ class ImagePair {
 
     readonly leftImage: DeskotImage;
 
-    readonly rightImage: DeskotImage;
+    readonly rightImage: Nullable<DeskotImage>;
 
     readonly anchor: Coordinate;
 
 
-    constructor(image: DeskotImage, rightImage: DeskotImage, anchor: Coordinate) {
+    constructor(image: DeskotImage, rightImage: Nullable<DeskotImage>, anchor: Coordinate) {
         this.leftImage = image;
         this.rightImage = rightImage;
         this.anchor = anchor;
     }
 
 
-    private static async load(imagePath: string, deskot: Deskot, useMirror: boolean = false): Promise<Blob> {
+    private static async load(imagePath: string, deskot: Deskot): Promise<Blob> {
         try {
-            const raw = await fetch(path.resolve(__dirname, "deskots", deskot.name, imagePath));
-            let blob = await raw.blob();
-            
-            if (useMirror) {
-                const bitmap = await createImageBitmap(blob, { imageOrientation: "flipY" });
-                const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-                const ctx = canvas.getContext('2d');
-
-                ctx!!.drawImage(bitmap, 0, 0);
-                blob = await canvas.convertToBlob();
-            }
+            const absolutePath = path.resolve(Main.path, "deskots", deskot.name, imagePath);
+            const buffer = fs.readFileSync(absolutePath);
+            let blob = new Blob([buffer]);
 
             return blob;
         } catch (e) {
+            console.error(e);
             throw new Error("Failed to load sprite image.");
         }
     }
 
 
     static async loadPair(leftPath: string, rightPath: Nullable<string>, anchor: Coordinate, deskot: Deskot): Promise<ImagePair> {
-        const [ leftImage, rightImage ] = await Promise.all([leftPath, rightPath].map((path, idx) =>
+        const [ leftImage, rightImage ] = await Promise.all([leftPath, rightPath].map((imagePath, idx) =>
         
             new Promise(async (res, _) => {
                 let result: ArrayBuffer;
                 let blob: Blob;
 
-                if (path == null) {
-                    if (idx === 1) {
-                        blob = await ImagePair.load(leftPath, deskot, true);
-                    } else {
-                        throw new Error("Sprite path is required.");;
-                    }
+                if (imagePath == null) {
+                    res(null);
+                    return;
                 } else {
-                    blob = await ImagePair.load(path, deskot);
+                    blob = await ImagePair.load(imagePath, deskot);
                 }
 
                 result = await blob.arrayBuffer();
-                const { width, height } = await createImageBitmap(blob);
+                
+                const absolutePath = path.resolve(Main.path, "deskots", deskot.name, imagePath);
+                const { width, height } = imageSize(absolutePath);
 
                 const buffer = new Uint8Array(result);
-                const dimension = new Dimension(width, height);
+                const dimension = new Dimension(width!, height!);
                 res(new DeskotImage(buffer, anchor, dimension));
-            }) as Promise<DeskotImage>
+            }) as Promise<Nullable<DeskotImage>>
 
         ));
         
-        return new ImagePair(leftImage, rightImage, anchor);
+        return new ImagePair(leftImage!, rightImage, anchor);
     }
     
 }
