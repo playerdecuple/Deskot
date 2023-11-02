@@ -1,10 +1,17 @@
 import Deskot from "../../Deskot";
 import AnimationBuilder from "../../animation/AnimationBuilder";
+import Animation from "../../animation/Animation";
 import LateInit from "../../type/Lateinit";
 import DomUtil from "../../utils/DomUtil";
 import Action from "../Action";
+import Stay from "../actions/Stay";
 import ActionFactoryLike from "./ActionFactoryLike";
 import ActionRef from "./ActionRef";
+import Move from "../actions/Move";
+import Sequence from "../actions/Sequence";
+import Select from "../actions/Select";
+import Animate from "../actions/Animate";
+
 
 
 class ActionBuilder implements ActionFactoryLike {
@@ -35,28 +42,26 @@ class ActionBuilder implements ActionFactoryLike {
         this.attr = DomUtil.getAttributes(actionNode);
 
         this.initChildren();
+
+        if (this.name.length) {
+            deskot.actionFactories.set(this.name, this);
+        }
     }
 
 
     private initChildren() {
         for (const childNode of this.node.children) {
-            if (childNode.tagName == "Action") {
+            if (childNode.tagName == "ACTION") {
 
                 const childFactory = new ActionBuilder(this.deskot, childNode);
                 this.childrenAction.push(childFactory);
 
-            } else if (childNode.tagName == "ActionReference") {
-
-                const actionName = childNode.getAttribute("name")!!;
-
-                if (!this.deskot.actionFactories.has(actionName)) {
-                    throw new Error("Action not found.");
-                }
+            } else if (childNode.tagName == "ACTIONREFERENCE") {
 
                 const ref = new ActionRef(this.deskot, childNode);
                 this.childrenAction.push(ref);
 
-            } else if (childNode.tagName == "Animation") {
+            } else if (childNode.tagName == "ANIMATION") {
 
                 const animation = new AnimationBuilder(this.deskot, childNode);
                 this.animations.push(animation);
@@ -69,30 +74,38 @@ class ActionBuilder implements ActionFactoryLike {
     async build(attr: any = this.attr): Promise<Action> {
         let action: LateInit<Action>;
 
-        const [
-            childrenAction,
-            animations
-        ] = await Promise.all([
-            async () => await this.createActions(),
-            async () => await this.createAnimations()
+        const loadPromises = await Promise.all([
+            this.createActions(),
+            this.createAnimations()
         ]);
+        const childrenAction = loadPromises[0] as Array<Action>;
+        const animations = loadPromises[1] as Array<Animation>;
         
         if (this.type == "embedded") {
             try {
                 const modulePath = this.attr?.class;
+                const actionClass = await import("." + modulePath + ".js");
+                
+                action = new actionClass.default(animations, attr);
 
-                const actionClass = await import(modulePath);
-                action = Object.create(actionClass.prototype);
-
-                action!!.constructor.apply(action, [
-                    animations, attr
-                ]);
+                if (action?.validate() !== true) {
+                    throw new Error();
+                }
             } catch (e) {
-                throw new Error("Class not found.");
+                console.error(e);
+                throw new Error(`An error occurred importing embedded module. (Required module file path: ${this.attr?.class})`);
             }
+        } else if (this.type == "stay") {
+            return new Stay(animations, attr);
+        } else if (this.type == "move") {
+            return new Move(animations, attr);
+        } else if (this.type == "animate") {
+            return new Animate(animations, attr);
+        } else if (this.type == "sequence") {
+            return new Sequence(attr, childrenAction);
+        } else if (this.type == "select") {
+            return new Select(attr, childrenAction);
         }
-
-        // TODO: Stand, Move, Animate, Sequence, Select
 
         return action!!;
     }
@@ -100,22 +113,29 @@ class ActionBuilder implements ActionFactoryLike {
 
     async createActions(): Promise<Array<Action>> {
         const actionPromises = this.childrenAction.map(factory => factory.build({}));
-        const actions = Promise.all(actionPromises);
+        const actions = await Promise.all(actionPromises);
 
-        return await actions;
+        return actions;
     }
 
 
     async createAnimations(): Promise<Array<Animation>> {
-        const animPromises = this.animations.map(factory => factory.build());
+        const animPromises = this.animations.map(factory => {
+            return factory.build();
+        });
         const animations = await Promise.all(animPromises);
         return animations;
     }
 
     
     static async build(deskot: Deskot, name: string, params: any): Promise<Action> {
-        const instance = deskot.actionFactories.get(name);
-        return await instance!!.build(params);
+        try {
+            const instance = deskot.actionFactories.get(name)!;
+            return await instance!.build({ ...params, ...instance.attr });
+        } catch (e) {
+            console.error(e);
+            throw new Error(`Failed to build Action instance. Action Name: ${name}`);
+        }
     }
 
     
