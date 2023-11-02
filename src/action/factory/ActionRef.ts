@@ -12,14 +12,14 @@ class ActionRef implements ActionFactoryLike {
 
     private readonly name: string;
 
-    private readonly param: any;
+    readonly attr: any;
 
 
     constructor(deskot: Deskot, refNode: Element) {
         this.deskot = deskot;
         this.node = refNode;
         this.name = refNode.getAttribute("name")!!;
-        this.param = DomUtil.getAttributes(refNode);
+        this.attr = DomUtil.getAttributes(refNode);
     }
 
 
@@ -29,7 +29,12 @@ class ActionRef implements ActionFactoryLike {
         }
         
         const actionFactory = this.deskot.actionFactories.get(this.name);
-        return await actionFactory!!.build(this.param);
+        return await actionFactory!.build(this.attr);
+    }
+
+    
+    toString(): string {
+        return `Action@Reference(DeskotInstanceName: ${this.deskot.name}, Name: ${this.name})`;
     }
 
 }
