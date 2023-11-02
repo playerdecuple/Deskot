@@ -7,3 +7,10 @@ package-lock.json
 
 # MacOS hidden files
 .DS_Store
+
+# VSCode configuration files
+.vscode/
+
+
+# Testing files
+test/
