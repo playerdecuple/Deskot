@@ -8,12 +8,13 @@ import ActionBuilder from "./action/factory/ActionBuilder";
 import BehaviorBuilder from "./behavior/BehaviorBuilder";
 import BehaviorLike from "./behavior/BehaviorLike";
 import Nullable from "./type/Nullable";
-import DeskotImage from "./image/DeskotImage";
 import DeskotManager from "./DeskotManager";
 import Coordinate from "./position/Coordinate";
 import Rectangle from "./position/Rectangle";
 import WindowManager from "./window/WindowManager";
 import Sound from "./sound/Sound";
+import DeskotEnvironment from "./environment/environments/DeskotEnvironment";
+import ImagePair from "./image/ImagePair";
 
 
 
@@ -27,15 +28,15 @@ class Deskot {
 
 
     // A window that displays the deskot.
-    private readonly windowManager: WindowManager;
+    public readonly windowManager: WindowManager;
 
     public manager: Nullable<DeskotManager>;
     
     // Ground coordinates of the deskot instance.
-    private anchor: Coordinate = new Coordinate(0, 0);
+    public anchor: Coordinate = new Coordinate(0, 0);
 
     // Image to display
-    private image: Nullable<DeskotImage>;
+    public image: Nullable<ImagePair>;
 
     public lookRight: boolean = false;
 
@@ -53,7 +54,7 @@ class Deskot {
 
 
     // States
-    private animating: boolean = false;
+    private animating: boolean = true;
 
     private paused: boolean = false;
 
@@ -71,15 +72,18 @@ class Deskot {
     readonly behaviorFactories = new Map<string, BehaviorBuilder>();
 
 
+    readonly environment = new DeskotEnvironment(this);
+
+
     constructor(name: string) {
         this.id = Deskot.autoIncrumentIdCounter++;
         this.name = name;
-        this.windowManager = new WindowManager(this.createWindow());
+        this.windowManager = new WindowManager(this, this.createWindow());
     }
 
     
     toString() {
-        return `Deskot(ID: ${this.id}, Name: ${this.name}, Tick: ${this.time})`;
+        return `Deskot(ID: ${this.id}, Name: ${this.name}, Tick: ${this.time}, Anchor: (${this.anchor.x}, ${this.anchor.y}))`;
     }
 
     
@@ -95,27 +99,42 @@ class Deskot {
 
         for (const listNode of document.querySelectorAll("ActionList")) {
             console.log(`Reading next action lists...`);
-            for (const node of listNode.querySelectorAll("Action")) {
-                const action = new ActionBuilder(this, node);
-                const { name } = action;
 
-                this.actionFactories.set(name, action);
-                console.log(`Action Load Complete: ${action.toString()}`);
+            for (const node of listNode.children) {
+                if (node.tagName != "ACTION") continue;
+
+                const action = new ActionBuilder(this, node);
+                console.log(`Action load complete: ${action.toString()}`);
             }
         }
 
         for (const listNode of document.querySelectorAll("BehaviorList")) {
             console.log(`Reading next behavior lists...`);
-            for (const node of listNode.querySelectorAll("Behavior")) {
-                const behavior = new BehaviorBuilder(this, node, []);
-                const { name } = behavior;
-
-                this.behaviorFactories.set(name, behavior);
-                console.log(`Behavior Load Complete: ${behavior.toString()}`);
-            }
+            this.loadBehavior(listNode, []);
         }
 
         return this;
+    }
+
+    private loadBehavior(listNode: Element, conditions: Array<string> = []) {
+        for (const node of listNode.children) {
+            if (node.tagName == "BEHAVIOR") {
+
+                const behavior = new BehaviorBuilder(this, node, conditions);
+                const { name } = behavior;
+
+                this.behaviorFactories.set(name, behavior);
+                console.log(`Behavior load complete: ${behavior.toString()}`);
+
+            } else if (node.tagName == "CONDITION") {
+
+                const nodeCondition = node.getAttribute("condition")!;
+                const nextCondition = [...conditions, nodeCondition];
+
+                this.loadBehavior(node, nextCondition);
+
+            }
+        }
     }
 
 
@@ -127,15 +146,18 @@ class Deskot {
     setBehavior(behavior: BehaviorLike) {
         this.behavior = behavior;
         this.behavior.init(this);
+
+        console.log(`[[ INSTANCE ${this.toString()} ]] Behavior is set to ${behavior.toString()}`);
     }
 
 
     createWindow(): BrowserWindow {
         return new BrowserWindow({
-            width: 0,
-            height: 0,
+            width: 128,
+            height: 128,
             webPreferences: {
-                nodeIntegration: true
+                nodeIntegration: true,
+                contextIsolation: false
             },
             transparent: true,
             frame: false,
@@ -164,6 +186,7 @@ class Deskot {
             if (this.image != null) {
                 // Set the window region
                 window.setBounds(this.getBounds());
+
                 manager.setImage(this.image);
                 manager.updateImage();
             }
@@ -180,15 +203,17 @@ class Deskot {
     }
 
     
-    private getBounds(): Rectangle {
+    getBounds(): Rectangle {
         if (this.image != null) {
-            const top = this.anchor.y - this.image.center.y;
-            const left = this.anchor.x - this.image.center.x;
+            const image = this.image.leftImage;
 
-            const { width, height } = this.image.size;
-            return new Rectangle(top, left, width, height);
+            const top = this.anchor.y - image.center.y;
+            const left = this.anchor.x - image.center.x;
+
+            const { width, height } = image.size;
+            return new Rectangle(left, top, width, height);
         } else {
-            return this.windowManager.window.getBounds();
+            return this.windowManager.window.getBounds() as Rectangle;
         }
     }
 
