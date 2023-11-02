@@ -1,5 +1,8 @@
+import Main from "../../main";
 import Deskot from "../Deskot";
 import ActionBuilder from "../action/factory/ActionBuilder";
+import Environment from "../environment/Environment";
+import Coordinate from "../position/Coordinate";
 import Script from "../script/Script";
 import Nullable from "../type/Nullable";
 import DomUtil from "../utils/DomUtil";
@@ -39,7 +42,7 @@ class BehaviorBuilder {
 
         const attributes = DomUtil.getAttributes(node);
         this.name = attributes.name;
-        this.actionName = attributes.actionName;
+        this.actionName = attributes.action ?? this.name;
         this.frequency = Number(attributes.frequency);
         this.isHidden = attributes.hidden == "true";
 
@@ -90,17 +93,16 @@ class BehaviorBuilder {
     
     static loadNextBuilder(deskot: Deskot, listArray: Array<BehaviorBuilder>, listNode: Element, conditions: Array<string>) {
         for (const node of listNode.children) {
-
             switch (node.tagName) {
-                case "Condition":
+                case "CONDITION":
                     const nextConditions = [ ...conditions ];
                     nextConditions.push(node.getAttribute("condition")!!);
 
                     this.loadNextBuilder(deskot, listArray, node, nextConditions);
                     break;
-                case "BehaviorReference":
-                case "BehaviorRef":
-                case "Behavior":
+                case "BEHAVIORREFERENCE":
+                case "BEHAVIORREF":
+                case "BEHAVIOR":
                     const nextBehavior = new this(deskot, node, conditions);
                     listArray.push(nextBehavior);
                     break;
@@ -112,15 +114,20 @@ class BehaviorBuilder {
 
     async build(): Promise<BehaviorLike> {
         const action = await ActionBuilder.build(this.deskot, this.actionName, this.params);
-        return new Behavior(this.name, action, this.isHidden);
+
+        if (action == undefined || action == null) {
+            console.warn(`In building ${this.toString()} instance: Failed to build Action(Name: ${this.actionName}) instance.`);
+        }
+
+        return new Behavior(this.name, action!!, this.isHidden);
     }
 
 
     static async build(deskot: Deskot, name: string) {
         if (deskot.behaviorFactories.has(name)) {
-            return await deskot.behaviorFactories.get(name)!!.build();
+            return await deskot.behaviorFactories.get(name)!.build();
         } else {
-            throw new Error("Behavior not found.");
+            throw new Error(`Behavior not found. (Behavior Name: ${name})`);
         }
     }
 
@@ -155,9 +162,18 @@ class BehaviorBuilder {
             candidates.push(...nextCandidates);
         }
 
-        if (!totalFrequency) {
-            // TODO: Fall
-            return await BehaviorBuilder.build(deskot, "fall");
+        if (!totalFrequency) { // Fall
+            const area = Main.config.allowMultiscreen
+                ? Environment.screen
+                : deskot.environment.getWorkArea()
+
+            deskot.setAnchor(new Coordinate(
+                Math.round(Math.random() * area.right - area.left) + area.left,
+                area.top - 256
+            ));
+
+            const behavior = await BehaviorBuilder.build(deskot, "Fall");
+            return behavior;
         }
 
         let random = Math.random() * totalFrequency;
@@ -168,7 +184,7 @@ class BehaviorBuilder {
             }
         }
 
-        return null
+        return null;
     }
 
 }

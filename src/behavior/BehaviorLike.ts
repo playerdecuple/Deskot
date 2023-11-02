@@ -16,6 +16,9 @@ interface BehaviorLike {
 
     onMouseReleased(e: MouseEvent): void;
 
+
+    toString(): string;
+
 }
 
 
