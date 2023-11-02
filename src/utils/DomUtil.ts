@@ -19,6 +19,10 @@ class DomUtil {
     static parseAttributes(deskot: Deskot, attr: any): Script | any {
         const newAttr: any = {};
         for (let [ k, v ] of Object.entries(attr)) {
+            if (v instanceof Script) {
+                newAttr[k] = v;
+                continue;
+            }
             newAttr[k] = this.parse(deskot, v as string);
         }
         return newAttr;

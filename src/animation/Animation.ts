@@ -22,8 +22,8 @@ class Animation {
     }
 
 
-    isEffective(param: any): boolean {
-        return this.condition != null && this.condition.get(param) as boolean;
+    isEffective(params: any): boolean {
+        return this.condition == null || this.condition.get(params) as boolean;
     }
 
     

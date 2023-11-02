@@ -21,7 +21,7 @@ class Script {
         this.script = script;
         this.initAtFrame = initAtFrame;
 
-        this.parameter.deskot = deskot;
+        this.parameter.deskot = this.deskot;
     }
 
 

@@ -34,8 +34,11 @@ class AnimationBuilder {
 
     
     private async loadSprites() {
+        // Clear array
+        this.sprites.splice(0, this.sprites.length);
+
         const loadHelpers = [...this.node.children].map(async (spriteNode) => {
-            if (spriteNode.tagName != "Sprite") {
+            if (spriteNode.tagName != "SPRITE") {
                 throw new Error("Failed to validate animation node.");
             }
             const sprite = await this.loadSprite(spriteNode);
@@ -91,7 +94,7 @@ class AnimationBuilder {
             throw new Error("Sound file not found.");
         }
 
-        return new Sprite(imagePair, anchor.x, anchor.y, duration, sound);
+        return new Sprite(imagePair, velocity.x, velocity.y, duration, sound);
     }
 
     
