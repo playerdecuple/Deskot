@@ -3,15 +3,260 @@
 
     <ActionList>
 
-        <Action name="Look" type="embedded" class="./actions/Look" />
-        <Action name="Offset" type="embedded" class="./actions/Offset" />
+        <Action name="Look" type="embedded" class="./actions/Look"></Action>
+        <Action name="Offset" type="embedded" class="./actions/Offset"></Action>
+
+
+        <!-- Standing -->
 
 		<Action name="Stand" type="stay" border="floor">
 			<Animation>
-				<Sprite image="/deskot1.png" anchor="64,128" velocity="0,0" duration="250" />
+				<Sprite image="./deskot1.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
 			</Animation>
         </Action>
 
+
+        <!-- Basic Moving -->
+
+        <Action name="Walk" type="move" border="floor">
+            <Animation>
+                <Sprite image="./deskot1.png" anchor="64,128" velocity="-2,0" duration="6"></Sprite>
+                <Sprite image="./deskot2.png" anchor="64,128" velocity="-2,0" duration="6"></Sprite>
+                <Sprite image="./deskot1.png" anchor="64,128" velocity="-2,0" duration="6"></Sprite>
+                <Sprite image="./deskot3.png" anchor="64,128" velocity="-2,0" duration="6"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <Action name="Run" type="move" border="floor">
+            <Animation>
+                <Sprite image="./deskot1.png" anchor="64,128" velocity="-4,0" duration="2"></Sprite>
+                <Sprite image="./deskot2.png" anchor="64,128" velocity="-4,0" duration="2"></Sprite>
+                <Sprite image="./deskot1.png" anchor="64,128" velocity="-4,0" duration="2"></Sprite>
+                <Sprite image="./deskot3.png" anchor="64,128" velocity="-4,0" duration="2"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <Action name="Dash" type="move" border="floor">
+            <Animation>
+                <Sprite image="./deskot1.png" anchor="64,128" velocity="-8,0" duration="2"></Sprite>
+                <Sprite image="./deskot2.png" anchor="64,128" velocity="-8,0" duration="2"></Sprite>
+                <Sprite image="./deskot1.png" anchor="64,128" velocity="-8,0" duration="2"></Sprite>
+                <Sprite image="./deskot3.png" anchor="64,128" velocity="-8,0" duration="2"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <!-- Sitting -->
+
+        <Action name="Sit" type="stay" border="floor">
+            <Animation>
+                <Sprite image="./deskot11.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <Action name="SitAndLookUp" type="stay" border="floor">
+            <Animation>
+                <Sprite image="./deskot26.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <Action name="SitAndLookAtMouse" type="stay" border="floor">
+            <Animation condition="#{deskot.environment.cursor.y &lt; deskot.environment.screen.height / 2}">
+                <Sprite image="./deskot26.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+            </Animation>
+            <Animation>
+                <Sprite image="./deskot11.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <Action name="SitAndSpinHead" type="animate" border="floor">
+            <Animation>
+				<Sprite image="./deskot26.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot15.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot27.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot16.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot28.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot17.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot29.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot11.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
+            </Animation>
+        </Action>
+
+
+        <Action name="SitWithLegsUp" type="stay" border="floor">
+			<Animation>
+				<Sprite image="./deskot30.png" anchor="64,112" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+        </Action>
+
+
+        <Action name="SitWithLegsDown" type="stay" border="floor">
+			<Animation>
+				<Sprite image="./deskot30.png" anchor="64,112" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+        </Action>
+
+
+		<Action name="SitAndDangleLegs" type="stay" border="floor">
+			<Animation>
+				<Sprite image="./deskot31.png" anchor="64,112" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot32.png" anchor="64,112" velocity="0,0" duration="15"></Sprite>
+				<Sprite image="./deskot31.png" anchor="64,112" velocity="0,0" duration="5"></Sprite>
+				<Sprite image="./deskot33.png" anchor="64,112" velocity="0,0" duration="15"></Sprite>
+			</Animation>
+		</Action>
+
+
+        <!-- Laying -->
+
+		<Action name="Sprawl" type="stay" border="floor">
+			<Animation>
+				<Sprite image="./deskot21.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+		</Action>
+
+
+        <Action name="Creep" type="stay" border="floor">
+			<Animation>
+				<Sprite image="./deskot20.png" anchor="64,128" velocity="0,0" duration="28"></Sprite>
+				<Sprite image="./deskot20.png" anchor="64,128" velocity="-2,0" duration="4"></Sprite>
+				<Sprite image="./deskot21.png" anchor="64,128" velocity="-2,0" duration="4"></Sprite>
+				<Sprite image="./deskot21.png" anchor="64,128" velocity="-1,0" duration="4"></Sprite>
+				<Sprite image="./deskot21.png" anchor="64,128" velocity="0,0" duration="24"></Sprite>
+			</Animation>
+        </Action>
+
+
+        <!-- Ceiling -->
+
+        <Action name="GrabCeiling" type="stay" border="ceiling">
+			<Animation>
+				<Sprite image="./deskot23.png" anchor="64,48" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+        </Action>
+        
+        
+		<Action name="ClimbCeiling" type="move" border="ceiling">
+			<Animation>
+				<Sprite image="./deskot25.png" anchor="64,48" velocity="0,0" duration="16"></Sprite>
+				<Sprite image="./deskot25.png" anchor="64,48" velocity="-1,0" duration="4"></Sprite>
+				<Sprite image="./deskot23.png" anchor="64,48" velocity="-1,0" duration="4"></Sprite>
+				<Sprite image="./deskot24.png" anchor="64,48" velocity="-1,0" duration="4"></Sprite>
+				<Sprite image="./deskot24.png" anchor="64,48" velocity="0,0" duration="16"></Sprite>
+				<Sprite image="./deskot24.png" anchor="64,48" velocity="-2,0" duration="4"></Sprite>
+				<Sprite image="./deskot23.png" anchor="64,48" velocity="-2,0" duration="4"></Sprite>
+				<Sprite image="./deskot25.png" anchor="64,48" velocity="-2,0" duration="4"></Sprite>
+			</Animation>
+		</Action>
+
+
+        <!-- Wall -->
+
+		<Action name="GrabWall" type="stay" border="Wall">
+			<Animation>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+		</Action>
+
+
+        <Action name="ClimbWall" type="move" border="wall">
+			<Animation condition="#{targetY &lt; deskot.anchor.y}">
+				<Sprite image="./deskot14.png" anchor="64,128" velocity="0,0" duration="16"></Sprite>
+				<Sprite image="./deskot14.png" anchor="64,128" velocity="0,-1" duration="4"></Sprite>
+				<Sprite image="./deskot12.png" anchor="64,128" velocity="0,-1" duration="4"></Sprite>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,-1" duration="4"></Sprite>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,0" duration="16"></Sprite>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,-2" duration="4"></Sprite>
+				<Sprite image="./deskot12.png" anchor="64,128" velocity="0,-2" duration="4"></Sprite>
+				<Sprite image="./deskot14.png" anchor="64,128" velocity="0,-2" duration="4"></Sprite>
+			</Animation>
+
+			<Animation condition="#{targetY &gt;= deskot.anchor.y}">
+				<Sprite image="./deskot14.png" anchor="64,128" velocity="0,0" duration="16"></Sprite>
+				<Sprite image="./deskot14.png" anchor="64,128" velocity="0,2" duration="4"></Sprite>
+				<Sprite image="./deskot12.png" anchor="64,128" velocity="0,2" duration="4"></Sprite>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,2" duration="4"></Sprite>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,0" duration="16"></Sprite>
+				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,1" duration="4"></Sprite>
+				<Sprite image="./deskot12.png" anchor="64,128" velocity="0,1" duration="4"></Sprite>
+				<Sprite image="./deskot14.png" anchor="64,128" velocity="0,1" duration="4"></Sprite>
+			</Animation>
+		</Action>
+
+
+        <!-- TODO: Chrome -->
+
+
+        <!-- Falling -->
+
+        <Action name="Jumping" type="embedded" class="./actions/Jump" velocity="20">
+			<Animation>
+				<Sprite image="./deskot22.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+        </Action>
+
+
+        <Action name="Falling" type="embedded" class="./actions/Fall" registanceX="0.05" registanceY="0.1" gravity="2">
+			<Animation>
+				<Sprite image="./deskot4.png" anchor="64,128" velocity="0,0" duration="250"></Sprite>
+			</Animation>
+        </Action>
+
+
+		<Action name="Bouncing" type="animate" border="floor">
+			<Animation>
+				<Sprite image="./deskot18.png" anchor="64,128" velocity="0,0" duration="4"></Sprite>
+				<Sprite image="./deskot19.png" anchor="64,128" velocity="0,0" duration="4"></Sprite>
+			</Animation>
+		</Action>
+
+    </ActionList>
+
+
+    <!-- Actual Behavior -->
+
+    <ActionList>
+    
+		<Action name="Fall" type="sequence" loop="false">
+			<ActionReference name="Falling"></ActionReference>
+			<Action type="select">
+				<Action type="sequence" condition="${deskot.environment.floor.isOn(deskot.anchor)}">
+					<ActionReference name="Bouncing"></ActionReference>
+					<ActionReference name="Stand" duration="${100 + Math.random() * 100}"></ActionReference>
+				</Action>
+				<ActionReference name="GrabWall" duration="100"></ActionReference>
+			</Action>
+		</Action>
+
+
+		<Action name="StandUp" type="sequence" loop="false">
+			<ActionReference name="Stand" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="SitDown" type="sequence" loop="false">
+			<ActionReference name="Sit" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="LieDown" type="sequence" loop="false">
+			<ActionReference name="Sprawl" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+		
+
+		<Action name="SitWhileDanglingLegs" type="sequence" loop="false">
+			<ActionReference name="SitWithLegsUp" duration="10"></ActionReference>
+			<ActionReference name="SitWithLegsDown" duration="${100 + Math.random() * 100}"></ActionReference>
+			<ActionReference name="SitAndDangleLegs" duration="${500 + Math.random() * 100}"></ActionReference>
+			<ActionReference name="SitWithLegsDown" duration="${100 + Math.random() * 100}"></ActionReference>
+			<ActionReference name="SitWithLegsUp" duration="10"></ActionReference>
+		</Action>
+    
     </ActionList>
 
 </DeskotActions>

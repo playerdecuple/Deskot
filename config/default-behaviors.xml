@@ -4,8 +4,41 @@
     <BehaviorList>
 
         <Behavior name="Fall" frequency="0" hidden="true" />
-        <Behavior name="Dragged" frequency="0" hidden="true"></Behavior>
-        <Behavior name="Thrown" frequency="0" hidden="true"></Behavior>
+
+        <!-- <Behavior name="Dragged" frequency="0" hidden="true" />
+
+        <Behavior name="Thrown" frequency="0" hidden="true" /> -->
+
+
+        <!-- On the floor -->
+
+        <Condition condition="#{deskot.environment.floor.isOn(deskot.anchor)}">
+            <Behavior name="StandUp" frequency="200" hidden="true" />
+            <Behavior name="SitDown" frequency="200">
+                <NextBehavior add="true">
+                    <BehaviorReference name="SitWhileDanglingLegs" frequency="100" />
+                    <BehaviorReference name="LieDown" frequency="100" />
+                </NextBehavior>
+            </Behavior>
+            <Behavior name="SitWhileDanglingLegs" frequency="0" />
+            <Behavior name="LieDown" frequency="0">
+                <NextBehavior add="false">
+                    <BehaviorReference name="SitDown" frequency="100" />
+                    <BehaviorReference name="CrawlAlongWorkAreaFloor" frequency="100" condition="${deskot.environment.floor.isOn(deskot.anchor)}" />
+                </NextBehavior>
+            </Behavior>
+        </Condition>
+
+        
+        <!-- On the work area floor -->
+
+        <Condition condition="#{deskot.environment.floor.isOn(deskot.anchor)}">
+            <Behavior name="CrawlAlongWorkAreaFloor" frequency="100" hidden="true">
+                <NextBehavior add="false">
+                    <BehaviorReference name="LieDown" frequency="1" />
+                </NextBehavior>
+            </Behavior>
+        </Condition>
 
     </BehaviorList>
 
