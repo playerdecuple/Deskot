@@ -4,11 +4,11 @@
   "description": "",
   "main": "build/main.js",
   "scripts": {
-    "copy-conf": "copyfiles -f config/**/* build/config",
-    "copy-deskots": "copyfiles -f deskots/**/* build/deskots",
-    "copy-public": "copyfiles -f public/**/* build/public && copyfiles -f public/* build/public",
+    "copy-conf": "copyfiles -u 1 \"config/**/*\" build/config",
+    "copy-deskots": "copyfiles -u 1 \"deskots/**/*\" build/deskots",
+    "copy-public": "copyfiles -u 1 \"public/**/*\" build/public",
     "prepare": "tsc && npm run copy-conf && npm run copy-deskots && npm run copy-public",
-    "start": "npm run prepare && nodemon --watch ./build/main.js --exec npm run exec",
+    "start": "npm run prepare && nodemon --watch src/main.ts --exec npm run exec",
     "exec": "cross-env DEBUG=true electron ."
   },
   "author": "player_decuple",
@@ -19,6 +19,7 @@
     "cross-env": "^7.0.3",
     "electron": "^27.0.2",
     "electron-builder": "^24.6.4",
+    "image-size": "^1.0.2",
     "jsdom": "^22.1.0",
     "nodemon": "^3.0.1",
     "typescript": "^5.2.2"
