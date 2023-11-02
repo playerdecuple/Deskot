@@ -3,22 +3,23 @@ import Animation from "../animation/Animation";
 import Script from "../script/Script";
 
 import LateInit from "../type/Lateinit";
+import Nullable from "../type/Nullable";
+import DomUtil from "../utils/DomUtil";
 
 
 
 abstract class Action {
     
-    private deskot: LateInit<Deskot>;
+    protected deskot: LateInit<Deskot>;
 
-    private animations: Array<Animation>;
+    protected animations: Array<Animation>;
 
-    private params: any;
+    protected params: any;
 
 
     private startTime: number = -1;
 
     
-    // TODO: Change type of 'animations' local variable.
     constructor(animations: Array<Animation> = [], params: any = {}) {
         this.animations = animations;
         this.params = params;
@@ -27,7 +28,7 @@ abstract class Action {
 
     init(deskot: Deskot) {
         this.deskot = deskot;
-        this.setTime();
+        this.time = 0;
 
         this.params.deskot = deskot;
         this.params.action = this;
@@ -40,6 +41,8 @@ abstract class Action {
         for (const animation of this.animations) {
             animation.init();
         }
+
+        console.log(`[[ INSTANCE ${deskot.toString()} ]] Action initalized: ${this.params.name}, ${this.time}`);
     }
 
 
@@ -66,21 +69,20 @@ abstract class Action {
     }
 
 
-    protected setTime(time: number = 0) {
-        this.startTime = this.deskot!!.time - time;
+    protected get time() {
+        return this.deskot!.time - this.startTime;
     }
-    
-    protected getTime() {
-        return this.deskot!!.time - this.startTime;
+    protected set time(time: number) {
+        this.startTime = this.deskot!.time - time;
     }
 
 
     protected tick() {}
 
 
-    hasNext() {
+    hasNext(): boolean {
         const isEffective = this.isEffective();
-        const isRunning = this.getTime() < this.getDuration();
+        const isRunning = this.time < this.getDuration();
 
         return isEffective && isRunning;
     }
@@ -95,8 +97,33 @@ abstract class Action {
         return this.params.draggable as boolean ?? true;
     }
 
+    
+    protected get animation(): Nullable<Animation> {
+        for (const animation of this.animations) {
+            if (animation.isEffective(this.params)) {
+                return animation;
+            }
+        }
+        return null;
+    }
+
+
     getDuration(): number {
-        return this.params.duration as number ?? Infinity;
+        if (this.params.duration === undefined) {
+            return Infinity;
+        }
+
+        const duration = DomUtil.parse(this.deskot!, this.params.duration);
+        if (duration instanceof Script) {
+            return duration.get(this.params);
+        } else {
+            return duration as number;
+        }
+    }
+
+
+    validate(): boolean {
+        return true;
     }
 
 }
