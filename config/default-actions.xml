@@ -74,7 +74,7 @@
         </Action>
 
 
-        <Action name="SitAndSpinHead" type="animate" border="floor">
+        <Action name="SitAndSpinHeadAction" type="animate" border="floor">
             <Animation>
 				<Sprite image="./deskot26.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
 				<Sprite image="./deskot15.png" anchor="64,128" velocity="0,0" duration="5"></Sprite>
@@ -215,6 +215,17 @@
 			</Animation>
 		</Action>
 
+
+		<Action name="Tripping" type="animate" border="floor">
+			<Animation>
+				<Sprite image="./deskot19.png" anchor="64,128" velocity="-8,0" duration="8"></Sprite>
+				<Sprite image="./deskot18.png" anchor="64,128" velocity="-4,0" duration="4"></Sprite>
+				<Sprite image="./deskot20.png" anchor="64,128" velocity="-2,0" duration="4"></Sprite>
+				<Sprite image="./deskot20.png" anchor="64,128" velocity="0,0" duration="10"></Sprite>
+				<Sprite image="./deskot19.png" anchor="64,128" velocity="-4,0" duration="4"></Sprite>
+			</Animation>
+		</Action>
+
     </ActionList>
 
 
@@ -256,6 +267,179 @@
 			<ActionReference name="SitWithLegsDown" duration="${100 + Math.random() * 100}"></ActionReference>
 			<ActionReference name="SitWithLegsUp" duration="10"></ActionReference>
 		</Action>
+
+
+		<Action name="HoldOntoWall" type="sequence" loop="false">
+			<ActionReference name="GrabWall" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="FallFromWall" type="sequence" loop="false">
+			<ActionReference name="Offset" x="${deskot.lookRight ? -1 : 1}"></ActionReference>
+			<ActionReference name="Stand"></ActionReference>
+		</Action>
+
+
+		<Action name="HoldOntoCeiling" type="sequence" loop="false">
+			<ActionReference name="GrabCeiling" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="FallFromCeiling" type="sequence" loop="false">
+			<ActionReference name="Offset" y="1"></ActionReference>
+			<ActionReference name="Stand"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkAlongWorkAreaFloor" type="sequence" loop="false">
+			<ActionReference name="Walk" targetX="${deskot.environment.workArea.left + 64 + Math.random() * (deskot.environment.workArea.width - 128)}"></ActionReference>
+		</Action>
+
+
+		<Action name="RunAlongWorkAreaFloor" type="sequence" loop="false">
+			<ActionReference name="Run" targetX="${deskot.environment.workArea.left + 64 + Math.random() * (deskot.environment.workArea.width - 128)}"></ActionReference>
+		</Action>
+
+
+		<Action name="CrawlAlongWorkAreaFloor" type="sequence" loop="false">
+			<ActionReference name="Creep" targetX="${deskot.environment.workArea.left + 64 + Math.random() * (deskot.environment.workArea.width - 128)}"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkLeftAlongFloorAndSit" type="sequence" loop="false">
+			<ActionReference name="Walk" targetX="${deskot.environment.workArea.left + 100 + Math.random() * 300}"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Look" lookRight="true"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Sit" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkRightAlongFloorAndSit" type="sequence" loop="false">
+			<ActionReference name="Walk" targetX="${deskot.environment.workArea.right - 100 - Math.random() * 300}"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Look" lookRight="false"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Sit" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="GrabWorkAreaBottomLeftWall" type="sequence" loop="false">
+			<ActionReference name="Walk" targetX="#{deskot.environment.workArea.left}"></ActionReference>
+			<ActionReference name="ClimbWall" targetY="#{deskot.environment.workArea.bottom - 64}"></ActionReference>
+		</Action>
+
+
+		<Action name="GrabWorkAreaBottomRightWall" type="sequence" loop="false">
+			<ActionReference name="Walk" targetX="#{deskot.environment.workArea.right}"></ActionReference>
+			<ActionReference name="ClimbWall" targetY="#{deskot.environment.workArea.bottom - 64}"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkLeftAndSit" type="sequence" loop="false">
+			<ActionReference name="Run" targetX="${deskot.environment.workArea.left + 100 + Math.random() * 300}"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Look" lookRight="true"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Sit" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkRightAndSit" type="sequence" loop="false">
+			<ActionReference name="Run" targetX="${deskot.environment.workArea.right - 100 - Math.random() * 300}"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Look" lookRight="true"></ActionReference>
+			<ActionReference name="Stand" duration="${20 + Math.random() * 20}"></ActionReference>
+			<ActionReference name="Sit" duration="${500 + Math.random() * 1000}"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkAndGrabBottomLeftWall" type="sequence" loop="false">
+			<ActionReference name="Run" targetX="#{deskot.environment.workArea.left}"></ActionReference>
+			<ActionReference name="ClimbWall" targetY="#{deskot.environment.workArea.bottom - 64}"></ActionReference>
+		</Action>
+
+
+		<Action name="WalkAndGrabBottomRightWall" type="sequence" loop="false">
+			<ActionReference name="Run" targetX="#{deskot.environment.workArea.right}"></ActionReference>
+			<ActionReference name="ClimbWall" targetY="#{deskot.environment.workArea.bottom - 64}"></ActionReference>
+		</Action>
+
+
+		<Action name="ClimbHalfwayAlongWall" type="sequence" loop="false">
+			<ActionReference name="ClimbWall" targetY="#{deskot.environment.workArea.top + 64}"></ActionReference>
+			<ActionReference name="Offset" y="-64"></ActionReference>
+			<ActionReference name="Look"></ActionReference>
+			<ActionReference name="ClimbCeiling" targetX="${deskot.lookRight
+				? deskot.environment.workArea.left + Math.random() * 100
+				: deskot.environment.workArea.right - Math.random() * 100
+			}"></ActionReference>
+		</Action>
+
+
+		<Action name="ClimbAlongCeiling" type="sequence" loop="false">
+			<ActionReference name="ClimbCeiling" targetX="${deskot.environment.workArea.left + 64 + Math.random() * (deskot.environment.workArea.width - 128)}"></ActionReference>
+		</Action>
+
+
+		<Action name="JumpFromLeftWall" type="sequence" loop="false">
+			<ActionReference name="Jumping" targetX="${deskot.environment.workArea.left}" targetY="${deskot.environment.workArea.bottom - Math.random() * deskot.environment.workArea.height / 4}"></ActionReference>
+			<ActionReference name="GrabWall" duration="${100 + Math.random() * 100}"></ActionReference>
+		</Action>
+
+
+		<Action name="JumpFromRightWall" type="sequence" loop="false">
+			<ActionReference name="Jumping" targetX="${deskot.environment.workArea.right}" targetY="${deskot.environment.workArea.bottom - Math.random() * deskot.environment.workArea.height / 4}"></ActionReference>
+			<ActionReference name="GrabWall" duration="${100 + Math.random() * 100}"></ActionReference>
+		</Action>
+
+
+		<Action name="ChaseMouse" type="sequence" loop="false">
+			<Action type="sequence" condition="${deskot.environment.ceiling.isOn(deskot.anchor)}">
+				<ActionReference name="Offset" y="1"></ActionReference>
+				<ActionReference name="Falling"></ActionReference>
+				<ActionReference name="Bouncing"></ActionReference>
+			</Action>
+			<Action type="sequence" condition="${deskot.environment.workArea.leftBorder.isOn(deskot.anchor)}">
+				<ActionReference name="Offset" x="1"></ActionReference>
+				<ActionReference name="Falling"></ActionReference>
+				<ActionReference name="Bouncing"></ActionReference>
+			</Action>
+			<Action type="sequence" condition="${deskot.environment.workArea.rightBorder.isOn(deskot.anchor)}">
+				<ActionReference name="Offset" x="-1"></ActionReference>
+				<ActionReference name="Falling"></ActionReference>
+				<ActionReference name="Bouncing"></ActionReference>
+			</Action>
+			<ActionReference name="Dash" targetX="${deskot.anchor.x + (deskot.environment.cursor.x - deskot.anchor.x) * Math.random() / 2}"></ActionReference>
+			<ActionReference name="Tripping" condition="${Math.random() &lt; 0.05}"></ActionReference>
+			<ActionReference name="Dash" targetX="${deskot.anchor.x + (deskot.environment.cursor.x - deskot.anchor.x) * Math.random()}"></ActionReference>
+			<ActionReference name="Tripping" condition="${Math.random() &lt; 0.05}"></ActionReference>
+			<ActionReference name="Dash"
+				targetX="${deskot.environment.cursor.x + gap}"
+				gap="${
+					deskot.anchor.x &lt; deskot.environment.cursor.x
+						? -Math.min(deskot.environment.cursor.x - deskot.anchor.x, Math.random() * 200)
+						:  Math.min(deskot.anchor.x - deskot.environment.cursor.x, Math.random() * 200)
+				}"
+			></ActionReference>
+			<ActionReference name="Look" lookRight="${deskot.anchor.x &lt; deskot.environment.cursor.x}"></ActionReference>
+		</Action>
+
+
+		<Action name="SitAndFaceMouse" type="sequence" loop="false">
+			<Action type="sequence" loop="10">
+				<ActionReference name="SitAndLookAtMouse" duration="${10 + Math.random() * 10}"></ActionReference>
+				<ActionReference name="Look" lookRight="${deskot.anchor.x &lt; deskot.environment.cursor.x}"></ActionReference>
+			</Action>
+		</Action>
+
+
+		<Action name="SitAndSpinHead" type="sequence" loop="false">
+			<ActionReference name="SitAndSpinHeadAction"></ActionReference>
+		</Action>
+
+
+		<!-- TODO: Pullup -->
     
     </ActionList>
 
