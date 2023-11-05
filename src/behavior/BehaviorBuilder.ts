@@ -59,7 +59,7 @@ class BehaviorBuilder {
 
         let isNextAdditive = true;
         for (const behaviorList of node.querySelectorAll("NextBehavior")) {
-            const nextAdditive = behaviorList.getAttribute("add") == "true";
+            const nextAdditive = behaviorList.getAttribute("add") != "false";
             isNextAdditive = nextAdditive;
 
             this.loadNextBuilder(behaviorList, []);
@@ -145,8 +145,9 @@ class BehaviorBuilder {
             return false;
         }
 
-        let candidates: Array<BehaviorBuilder> = Object
-            .values(deskot.behaviorFactories)
+        let candidates: Array<BehaviorBuilder> = [...deskot
+            .behaviorFactories
+            .values()]
             .filter(factory => filterCandidates(factory, params));
 
         if (prevName != null) {

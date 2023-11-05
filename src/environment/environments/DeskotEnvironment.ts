@@ -70,6 +70,10 @@ class DeskotEnvironment {
     }
 
 
+    get ceiling() {
+        return this.ceilingBorder;
+    }
+
     get ceilingBorder() {
         return this.getCeilingBorder();
     }

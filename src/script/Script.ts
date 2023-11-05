@@ -37,11 +37,23 @@ class Script {
 
     get(parameter: any = {}): any {
         const constructorParameter = { ...this.parameter, ...parameter };
+
+        let script = this.script;
+        if (script.startsWith("${") && script.endsWith("}")) {
+            script = script.substring(2, script.length - 1);
+        } else if (script.startsWith("#{") && script.endsWith("}")) {
+            script = script.substring(2, script.length - 1);
+        }
+
         try {
-            const evaluateInstance = new Function(...Object.keys(constructorParameter), `return ${this.script}`);
-            this.setValue(evaluateInstance.call(Object.values(constructorParameter)));
+            const evaluateInstance = new Function(...Object.keys(constructorParameter), `
+                return ${script};
+            `);
+            this.setValue(evaluateInstance(...Object.values(constructorParameter)));
             return this.getValue();
         } catch (e) {
+            console.error(`--- On script ---\n${script}\n-----------------`);
+            console.error(e);
             throw new Error("Failed to evaluate script.");
         }
     }

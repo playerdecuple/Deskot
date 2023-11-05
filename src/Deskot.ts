@@ -185,7 +185,7 @@ class Deskot {
         if (this.isAnimating()) {
             if (this.image != null) {
                 // Set the window region
-                window.setBounds(this.getBounds());
+                window.setBounds(this.getBounds() as any);
 
                 manager.setImage(this.image);
                 manager.updateImage();
