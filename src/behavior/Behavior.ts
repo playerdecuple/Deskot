@@ -52,7 +52,7 @@ class Behavior implements BehaviorLike {
                 screen.right <= bounds.x ||
                 screen.bottom <= bounds.y
             ) {
-                console.warn(`[[ INSTANCE ${deskot.toString()} ]] Out of screen bounds! In Behavior: ${this.toString()}`);
+                deskot.log(`Out of screen bounds! In Behavior: ${this.toString()}`);
 
                 if (Main.config.allowMultiscreen === true) {
                     deskot.anchor = new Coordinate(
@@ -74,7 +74,7 @@ class Behavior implements BehaviorLike {
                 deskot.setBehavior(fallBehavior);
             }
         } else {
-            console.log(`[[ INSTANCE ${deskot.toString()}]] Behavior completed: ${this.toString()}`);
+            deskot.log(`Behavior completed: ${this.toString()}`);
 
             const nextBehavior = await BehaviorBuilder.buildRandomBehavior(deskot, this.name);
             deskot.setBehavior(nextBehavior!);

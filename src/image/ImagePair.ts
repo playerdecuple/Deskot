@@ -27,11 +27,11 @@ class ImagePair {
     }
 
 
-    private static async load(imagePath: string, deskot: Deskot): Promise<Blob> {
+    private static load(imagePath: string, deskot: Deskot): Blob {
         try {
             const absolutePath = path.resolve(Main.path, "deskots", deskot.name, imagePath);
             const buffer = fs.readFileSync(absolutePath);
-            let blob = new Blob([buffer]);
+            let blob = new Blob([ buffer ], { type: "image/png" });
 
             return blob;
         } catch (e) {
@@ -52,7 +52,7 @@ class ImagePair {
                     res(null);
                     return;
                 } else {
-                    blob = await ImagePair.load(imagePath, deskot);
+                    blob = ImagePair.load(imagePath, deskot);
                 }
 
                 result = await blob.arrayBuffer();
@@ -62,6 +62,7 @@ class ImagePair {
 
                 const buffer = new Uint8Array(result);
                 const dimension = new Dimension(width!, height!);
+
                 res(new DeskotImage(buffer, anchor, dimension));
             }) as Promise<Nullable<DeskotImage>>
 
