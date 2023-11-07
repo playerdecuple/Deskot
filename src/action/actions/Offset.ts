@@ -1,32 +1,50 @@
+import Deskot from "../../Deskot";
 import Coordinate from "../../position/Coordinate";
+import Script from "../../script/Script";
 import InstantAction from "../InstantAction";
 
 
 class Offset extends InstantAction {
 
 
-    constructor(params: any) {
+    constructor(_: Array<any>, params: any) {
         super(params);
     }
+
+
+    override init(deskot: Deskot) {
+        super.init(deskot);
+    }
+
 
     apply(): void {
         const { x, y } = this.deskot!.anchor;
 
-        this.deskot!.setAnchor(new Coordinate(
-            this.getOffsetX() + x,
-            this.getOffsetY() + y
-        ));
+        this.deskot!.anchor = new Coordinate(
+            this.offsetX + x,
+            this.offsetY + y
+        );
     }
 
 
-    private getOffsetX() {
-        return this.params.offsetX ?? 0;
+    get offsetX(): number {
+        let x = this.params.x ?? 0;
+        if (x instanceof Script) {
+            x = x.get(this.params);
+        }
+
+        return x;
     }
 
-    private getOffsetY() {
-        return this.params.offsetY ?? 0;
-    }
 
+    get offsetY(): number {
+        let y = this.params.y ?? 0;
+        if (y instanceof Script) {
+            y = y.get(this.params);
+        }
+
+        return y;
+    }
 
 }
 

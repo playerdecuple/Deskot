@@ -90,18 +90,22 @@ class Deskot {
     applyXml(xmlPath: string): Deskot {
         if (!fs.existsSync(xmlPath)) {
             throw new Error("Configuration xml not found.");
+        } else {
+            console.log(`Started loading xml file for deskot instance '${this.name}'. (XML file path: ${xmlPath})`);
         }
-        console.log(`Started loading xml file for deskot instance '${this.name}'. (XML file path: ${xmlPath})`);
 
         const xmlRaw = fs.readFileSync(xmlPath).toString();
-        const dom = new JSDOM(xmlRaw);
+        const dom = new JSDOM(xmlRaw, {
+            contentType: "text/xml"
+        });
+
         const document = dom.window.document;
 
         for (const listNode of document.querySelectorAll("ActionList")) {
             console.log(`Reading next action lists...`);
 
             for (const node of listNode.children) {
-                if (node.tagName != "ACTION") continue;
+                if (node.tagName != "Action") continue;
 
                 const action = new ActionBuilder(this, node);
                 console.log(`Action load complete: ${action.toString()}`);
@@ -118,7 +122,7 @@ class Deskot {
 
     private loadBehavior(listNode: Element, conditions: Array<string> = []) {
         for (const node of listNode.children) {
-            if (node.tagName == "BEHAVIOR") {
+            if (node.tagName == "Behavior") {
 
                 const behavior = new BehaviorBuilder(this, node, conditions);
                 const { name } = behavior;
@@ -126,7 +130,7 @@ class Deskot {
                 this.behaviorFactories.set(name, behavior);
                 console.log(`Behavior load complete: ${behavior.toString()}`);
 
-            } else if (node.tagName == "CONDITION") {
+            } else if (node.tagName == "Condition") {
 
                 const nodeCondition = node.getAttribute("condition")!;
                 const nextCondition = [...conditions, nodeCondition];
@@ -147,7 +151,7 @@ class Deskot {
         this.behavior = behavior;
         this.behavior.init(this);
 
-        console.log(`[[ INSTANCE ${this.toString()} ]] Behavior is set to ${behavior.toString()}`);
+        this.log(`Behavior is set to ${behavior.toString()}`);
     }
 
 
@@ -185,7 +189,13 @@ class Deskot {
         if (this.isAnimating()) {
             if (this.image != null) {
                 // Set the window region
-                window.setBounds(this.getBounds() as any);
+                const bounds = this.getBounds();
+                window.setBounds({
+                    x: Math.floor(bounds.x),
+                    y: Math.floor(bounds.y),
+                    width: Math.floor(bounds.width),
+                    height: Math.floor(bounds.height)
+                });
 
                 manager.setImage(this.image);
                 manager.updateImage();
@@ -213,13 +223,13 @@ class Deskot {
             const { width, height } = image.size;
             return new Rectangle(left, top, width, height);
         } else {
-            return this.windowManager.window.getBounds() as Rectangle;
+            return Rectangle.from(this.windowManager.window.getBounds());
         }
     }
 
 
-    setAnchor(anchor: Coordinate) {
-        this.anchor = anchor;
+    log(...message: Array<string>) {
+        console.log(`\n<< Instance ${this.toString()} >>\n    ${ message.join("\n    ") }`);
     }
 
 }

@@ -23,13 +23,17 @@ class DomUtil {
                 newAttr[k] = v;
                 continue;
             }
-            newAttr[k] = this.parse(deskot, v as string);
+            newAttr[k] = DomUtil.parse(deskot, String(v));
         }
         return newAttr;
     }
 
 
     static parse(deskot: Deskot, v: string): any {
+        if (v == undefined) {
+            return undefined;
+        }
+
         let result;
         v = v.trim();
 
@@ -47,9 +51,8 @@ class DomUtil {
                     result = v === "true";
                     break;
                 default:
-                    try {
-                        result = Number(result);
-                    } catch (e) {
+                    result = Number(v);
+                    if (isNaN(result)) {
                         result = v;
                     }
             }

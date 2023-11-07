@@ -23,18 +23,18 @@ class ActionRef implements ActionFactoryLike {
     }
 
 
-    async build(): Promise<Action> {
+    async build(params: any): Promise<Action> {
         if (!this.deskot.actionFactories.has(this.name)) {
             throw new Error("Action not found.");
         }
         
         const actionFactory = this.deskot.actionFactories.get(this.name);
-        return await actionFactory!.build(this.attr);
+        return await actionFactory!.build({...this.attr, ...params});
     }
 
     
     toString(): string {
-        return `Action@Reference(DeskotInstanceName: ${this.deskot.name}, Name: ${this.name})`;
+        return `ActionReference(DeskotInstanceName: ${this.deskot.name}, Name: ${this.name})`;
     }
 
 }
