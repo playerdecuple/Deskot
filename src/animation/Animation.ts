@@ -23,6 +23,13 @@ class Animation {
 
 
     isEffective(params: any): boolean {
+        for (const [ k, v ] of Object.entries(params)) {
+            if (v instanceof Script) {
+                params[k] = v.get(params);
+            } else {
+                params[k] = v;
+            }
+        }
         return this.condition == null || this.condition.get(params) as boolean;
     }
 
