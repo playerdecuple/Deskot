@@ -4,7 +4,6 @@ import Script from "../script/Script";
 
 import LateInit from "../type/Lateinit";
 import Nullable from "../type/Nullable";
-import DomUtil from "../utils/DomUtil";
 
 
 
@@ -26,12 +25,18 @@ abstract class Action {
     }
 
 
+    next() {
+        this.initFrame();
+        this.tick();
+    }
+
+
     init(deskot: Deskot) {
         this.deskot = deskot;
         this.time = 0;
 
         this.params.deskot = deskot;
-        this.params.action = this;
+        this.params.action = this
 
         for (const param of Object.values(this.params)) {
             if (param instanceof Script) {
@@ -42,13 +47,7 @@ abstract class Action {
             animation.init();
         }
 
-        console.log(`[[ INSTANCE ${deskot.toString()} ]] Action initalized: ${this.params.name}, ${this.time}`);
-    }
-
-
-    next() {
-        this.initFrame();
-        this.tick();
+        deskot.log(`Action initalized: ${this.toString()}`);
     }
 
 
@@ -65,7 +64,7 @@ abstract class Action {
     
 
     toString() {
-        return `${this.constructor.name}@Action (Name: ${this.params.name ?? "undefined"})`;
+        return `${this.constructor.name}@Action(Name: ${this.params.name ?? "undefined"}, Duration: ${this?.duration})`;
     }
 
 
@@ -82,7 +81,7 @@ abstract class Action {
 
     hasNext(): boolean {
         const isEffective = this.isEffective();
-        const isRunning = this.time < this.getDuration();
+        const isRunning = this.time < this.duration;
 
         return isEffective && isRunning;
     }
@@ -108,16 +107,12 @@ abstract class Action {
     }
 
 
-    getDuration(): number {
-        if (this.params.duration === undefined) {
-            return Infinity;
-        }
-
-        const duration = DomUtil.parse(this.deskot!, this.params.duration);
+    get duration(): number {
+        const { duration } = this.params;
         if (duration instanceof Script) {
             return duration.get(this.params);
         } else {
-            return duration as number;
+            return (duration ?? Infinity) as number;
         }
     }
 
