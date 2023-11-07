@@ -31,7 +31,7 @@ class WindowManager {
     private initPage() {
         const { window } = this;
         window.loadFile(path.resolve(Main.path, "./public/index.html"));
-        window.webContents.openDevTools();
+        // window.webContents.openDevTools();
     }
 
     
