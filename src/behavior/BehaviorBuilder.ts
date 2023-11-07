@@ -94,15 +94,18 @@ class BehaviorBuilder {
     static loadNextBuilder(deskot: Deskot, listArray: Array<BehaviorBuilder>, listNode: Element, conditions: Array<string>) {
         for (const node of listNode.children) {
             switch (node.tagName) {
-                case "CONDITION":
+                case "Condition":
                     const nextConditions = [ ...conditions ];
                     nextConditions.push(node.getAttribute("condition")!!);
 
                     this.loadNextBuilder(deskot, listArray, node, nextConditions);
                     break;
-                case "BEHAVIORREFERENCE":
-                case "BEHAVIORREF":
-                case "BEHAVIOR":
+                case "BehaviourReference":
+                case "BehaviorReference":
+                case "BehaviourRef":
+                case "BehaviorRef":
+                case "Behaviour":
+                case "Behavior":
                     const nextBehavior = new this(deskot, node, conditions);
                     listArray.push(nextBehavior);
                     break;
@@ -168,10 +171,10 @@ class BehaviorBuilder {
                 ? Environment.screen
                 : deskot.environment.getWorkArea()
 
-            deskot.setAnchor(new Coordinate(
+            deskot.anchor = new Coordinate(
                 Math.round(Math.random() * area.right - area.left) + area.left,
                 area.top - 256
-            ));
+            );
 
             const behavior = await BehaviorBuilder.build(deskot, "Fall");
             return behavior;

@@ -32,13 +32,19 @@ class AnimationBuilder {
         }
     }
 
+
+    async build(condition: Nullable<Script> = this.condition): Promise<Animation> {
+        await this.loadSprites();
+        return new Animation(condition, this.sprites);
+    }
+
     
     private async loadSprites() {
         // Clear array
         this.sprites.splice(0, this.sprites.length);
 
         const loadHelpers = [...this.node.children].map(async (spriteNode) => {
-            if (spriteNode.tagName != "SPRITE") {
+            if (spriteNode.tagName != "Sprite") {
                 throw new Error("Failed to validate animation node.");
             }
             const sprite = await this.loadSprite(spriteNode);
@@ -47,12 +53,6 @@ class AnimationBuilder {
         const spriteList = await Promise.all(loadHelpers);
 
         this.sprites.push(...spriteList);
-    }
-
-
-    async build(condition: Nullable<Script> = this.condition): Promise<Animation> {
-        await this.loadSprites();
-        return new Animation(condition, this.sprites);
     }
 
 

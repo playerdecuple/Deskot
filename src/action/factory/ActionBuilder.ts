@@ -39,7 +39,9 @@ class ActionBuilder implements ActionFactoryLike {
 
         this.name = actionNode.getAttribute("name") ?? "";
         this.type = actionNode.getAttribute("type") ?? "";
+
         this.attr = DomUtil.getAttributes(actionNode);
+        this.attr = DomUtil.parseAttributes(deskot, this.attr);
 
         this.initChildren();
 
@@ -51,17 +53,17 @@ class ActionBuilder implements ActionFactoryLike {
 
     private initChildren() {
         for (const childNode of this.node.children) {
-            if (childNode.tagName == "ACTION") {
+            if (childNode.tagName == "Action") {
 
                 const childFactory = new ActionBuilder(this.deskot, childNode);
                 this.childrenAction.push(childFactory);
 
-            } else if (childNode.tagName == "ACTIONREFERENCE") {
+            } else if (childNode.tagName == "ActionReference") {
 
                 const ref = new ActionRef(this.deskot, childNode);
                 this.childrenAction.push(ref);
 
-            } else if (childNode.tagName == "ANIMATION") {
+            } else if (childNode.tagName == "Animation") {
 
                 const animation = new AnimationBuilder(this.deskot, childNode);
                 this.animations.push(animation);
@@ -71,8 +73,27 @@ class ActionBuilder implements ActionFactoryLike {
     }
 
 
-    async build(attr: any = this.attr): Promise<Action> {
+    async createActions(): Promise<Array<Action>> {
+        const actionPromises = this.childrenAction.map(factory => factory.build({}));
+        const actions = await Promise.all(actionPromises);
+
+        return actions;
+    }
+
+
+    async createAnimations(): Promise<Array<Animation>> {
+        const animPromises = this.animations.map(factory => {
+            return factory.build();
+        });
+        const animations = await Promise.all(animPromises);
+        return animations;
+    }
+
+
+    async build(attr: any = {}): Promise<Action> {
         let action: LateInit<Action>;
+        attr = DomUtil.parseAttributes(this.deskot, attr);
+        attr = { ...attr, ...this.attr };
 
         const loadPromises = await Promise.all([
             this.createActions(),
@@ -110,28 +131,11 @@ class ActionBuilder implements ActionFactoryLike {
         return action!!;
     }
 
-
-    async createActions(): Promise<Array<Action>> {
-        const actionPromises = this.childrenAction.map(factory => factory.build({}));
-        const actions = await Promise.all(actionPromises);
-
-        return actions;
-    }
-
-
-    async createAnimations(): Promise<Array<Animation>> {
-        const animPromises = this.animations.map(factory => {
-            return factory.build();
-        });
-        const animations = await Promise.all(animPromises);
-        return animations;
-    }
-
     
     static async build(deskot: Deskot, name: string, params: any): Promise<Action> {
         try {
             const instance = deskot.actionFactories.get(name)!;
-            return await instance!.build({ ...params, ...instance.attr });
+            return await instance!.build({ ...params });
         } catch (e) {
             console.error(e);
             throw new Error(`Failed to build Action instance. Action Name: ${name}`);
