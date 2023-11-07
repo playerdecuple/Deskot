@@ -19,6 +19,12 @@ class Rectangle {
     }
 
 
+    static from(rectangleLike: any): Rectangle {
+        const { x, y, width, height } = rectangleLike;
+        return new Rectangle(x, y, width, height);
+    }
+
+
     toString(): string {
         return `Rectangle(x: ${this.x}, y: ${this.y}, width: ${this.width}, height: ${this.height})`;
     }
@@ -31,7 +37,7 @@ class Rectangle {
         const height = rect.height > this.height ? rect.height : this.height;
 
         if (this.x + this.y + this.width + this.height == 0) {
-            return {...rect} as Rectangle;
+            return Rectangle.from(rect);
         }
 
         return new Rectangle(x, y, width, height);

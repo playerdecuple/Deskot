@@ -51,14 +51,15 @@ abstract class Environment {
 
 
     static updateScreenRect() {
-        let tempBound = new Rectangle(0, 0, 0, 0);
+        let tempBound: Rectangle = new Rectangle(0, 0, 0, 0);
         const screenRects = new Map<string, Rectangle>();
 
         const screens = screen.getAllDisplays();
 
         for (const screen of screens) {
-            const boundRect = {...screen.bounds} as Rectangle;
+            const boundRect = Rectangle.from(screen.bounds);
             tempBound = tempBound.union(boundRect);
+
             screenRects.set(screen.id.toString(), boundRect);
         }
 
