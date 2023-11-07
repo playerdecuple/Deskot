@@ -30,6 +30,7 @@ class WindowManager {
 
     private initPage() {
         const { window } = this;
+        window.setMenu(null);
         window.loadFile(path.resolve(Main.path, "./public/index.html"));
         // window.webContents.openDevTools();
     }
