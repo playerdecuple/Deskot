@@ -21,7 +21,8 @@ class BorderedAction extends Action {
     override init(deskot: Deskot) {
         super.init(deskot);
 
-        const borderType = this.params!.border ?? this.defaultBorderType;
+        let borderType: string = this.params!.border ?? this.defaultBorderType;
+        borderType = borderType.toLowerCase();
 
         if (borderType == "ceiling") {
             this.border = deskot.environment.ceilingBorder;

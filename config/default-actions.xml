@@ -157,7 +157,7 @@
 
         <!-- Wall -->
 
-		<Action name="GrabWall" type="stay" border="Wall">
+		<Action name="GrabWall" type="stay" border="wall">
 			<Animation>
 				<Sprite image="./deskot13.png" anchor="64,128" velocity="0,0" duration="250" />
 			</Animation>
