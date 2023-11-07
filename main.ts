@@ -25,6 +25,7 @@ class Main {
             this.loadConfiguration();
             this.loadDeskots();
         } catch (e) {
+            console.error(e);
             throw new Error("Failed to load configuration file.");
         }
         this.deskotManager.start();
@@ -73,7 +74,7 @@ class Main {
     private static async initDeskot(deskotInstance: Deskot) {
         console.log(`Initializing Deskot instance... (${deskotInstance.toString()})`);
         
-        deskotInstance.setAnchor(new Coordinate(-4000, -4000));
+        deskotInstance.anchor = new Coordinate(-4000, -4000);
         deskotInstance.lookRight = Math.random() < 0.5;
 
         try {
