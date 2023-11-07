@@ -1,5 +1,7 @@
+import Deskot from "../../Deskot";
 import Animation from "../../animation/Animation";
 import Coordinate from "../../position/Coordinate";
+import Script from "../../script/Script";
 import BorderedAction from "../BorderedAction";
 
 
@@ -13,6 +15,12 @@ class Move extends BorderedAction {
 
     constructor(animations: Array<Animation>, params: any) {
         super(animations, params);
+    }
+
+
+    override init(deskot: Deskot) {
+        super.init(deskot);
+        deskot.log(`${this.toString()} > Moving to: (${this.targetX}, ${this.targetY})`)
     }
 
 
@@ -47,6 +55,7 @@ class Move extends BorderedAction {
         }
 
         const { targetX, targetY } = this;
+
         const deskot = this.deskot!!;
         let down = false;
 
@@ -62,28 +71,44 @@ class Move extends BorderedAction {
 
         this.animation?.next(deskot, this.time);
 
-        if (
-            (deskot.lookRight && deskot.anchor.x >= targetX) ||
-            (!deskot.lookRight && deskot.anchor.x <= targetX)
-        ) {
-            deskot.anchor = new Coordinate(targetX, deskot.anchor.y);
+        if (targetX != this.defaultTargetX) {
+            if (
+                (deskot.lookRight && deskot.anchor.x >= targetX) ||
+                (!deskot.lookRight && deskot.anchor.x <= targetX)
+            ) {
+                deskot.anchor = new Coordinate(targetX, deskot.anchor.y);
+            }
         }
 
-        if (
-            (down && deskot.anchor.y >= targetY) ||
-            (!down && deskot.anchor.y <= targetY)
-        ) {
-            deskot.anchor = new Coordinate(deskot.anchor.x, targetY);
+        if (targetY != this.defaultTargetY) {
+            if (
+                (down && deskot.anchor.y >= targetY) ||
+                (!down && deskot.anchor.y <= targetY)
+            ) {
+                deskot.anchor = new Coordinate(deskot.anchor.x, targetY);
+            }
         }
     }
 
 
-    get targetX() {
-        return this.params?.targetX ?? this.defaultTargetX;
+    get targetX(): number {
+        let result = this.params?.targetX ?? this.defaultTargetX;
+
+        if (result instanceof Script) {
+            result = result.get(this.params); // -> number
+        }
+
+        return result as number;
     }
 
-    get targetY() {
-        return this.params?.targetY ?? this.defaultTargetY;
+    get targetY(): number {
+        let result = this.params?.targetY ?? this.defaultTargetY;
+
+        if (result instanceof Script) {
+            result = result.get(this.params); // -> number
+        }
+
+        return result as number;
     }
 
 }

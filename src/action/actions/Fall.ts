@@ -105,21 +105,21 @@ class Fall extends Action {
     }
 
 
-    get initialVX() {
+    get initialVX(): number {
         return this.params?.initialVX ?? this.defaultInitialVX;
     }
-    get initialVY() {
+    get initialVY(): number {
         return this.params?.initialVY ?? this.defaultInitialVY;
     }
 
-    get gravity() {
+    get gravity(): number {
         return this.params?.gravity ?? this.defaultGravity;
     }
 
-    get resistanceX() {
+    get resistanceX(): number {
         return this.params?.resistanceX ?? this.defaultResistanceX;
     }
-    get resistanceY() {
+    get resistanceY(): number {
         return this.params?.resistanceY ?? this.defaultResistanceY;
     }
     

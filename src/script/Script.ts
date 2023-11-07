@@ -13,7 +13,7 @@ class Script {
     private initAtFrame: boolean;
 
 
-    private lastValue: any;
+    private lastValue: any = null;
 
 
     constructor(deskot: Deskot, script: string, initAtFrame: boolean) {
@@ -25,17 +25,20 @@ class Script {
     }
 
 
-    getValue() {
+    get value() {
         return this.lastValue;
     }
 
-    private setValue(newValue: any): any {
+    private set value(newValue: any) {
         this.lastValue = newValue;
-        return newValue;
     }
 
 
     get(parameter: any = {}): any {
+        if (this.value != null) {
+            return this.lastValue;
+        }
+
         const constructorParameter = { ...this.parameter, ...parameter };
 
         let script = this.script;
@@ -49,8 +52,8 @@ class Script {
             const evaluateInstance = new Function(...Object.keys(constructorParameter), `
                 return ${script};
             `);
-            this.setValue(evaluateInstance(...Object.values(constructorParameter)));
-            return this.getValue();
+            this.value = evaluateInstance(...Object.values(constructorParameter));
+            return this.value;
         } catch (e) {
             console.error(`--- On script ---\n${script}\n-----------------`);
             console.error(e);
@@ -60,7 +63,7 @@ class Script {
 
 
     init() {
-        this.setValue(null);
+        this.value = null;
     }
 
     initFrame() {

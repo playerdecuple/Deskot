@@ -85,6 +85,15 @@ class Area {
     }
 
     
+    get width() {
+        return this.getWidth();
+    }
+
+    get height() {
+        return this.getHeight();
+    }
+
+    
     isSameArea(rect: Rectangle | Area) {
         if (rect instanceof Area) {
             rect = rect.toRectangle();
